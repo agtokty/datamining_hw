@@ -1,0 +1,26 @@
+.container2{
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.table-container{
+    overflow-x: auto;
+    white-space: nowrap;
+    height: 70vh;
+    width: 96vw;
+}
+
+/* html>body tbody.scrollContent {
+    display: block;
+    height: 90vh;
+    overflow: auto;
+    width: 100%;
+}
+  */
+/* .table{
+    width: 100%
+}
+
+.tbl-bordered tbody tr{
+    border-top: 1px solid black;
+} */

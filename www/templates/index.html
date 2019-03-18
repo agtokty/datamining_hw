@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+         <meta charset="UTF-8">
+         <link rel="stylesheet" href="/static/stylesheets/index.css">
+
+         <!-- The welcome struct (shown in the main.go code) is received within the HTML and we just need to use the . operator and retrieve the information we want -->
+         <title>Welcome {{.Name}}</title>
+         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+   </head>
+   <body>
+       <div class="container">
+            <!-- <div class="header">
+                <h3>Uploaded files</h3>
+            </div> -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Files</li>
+                </ol>
+            </nav>
+            <div class="card">
+                <div class="card-body">
+                    <div>Upload new files :</div>
+                    <form method="POST" action="/upload" enctype="multipart/form-data">
+                        <input type="file" name="file" id="file" accept=".csv">
+                        <input type="submit" name="file" id="file">
+                    </form>
+                </div>
+            </div>
+            <div class="">
+                <table class="table tbl-bordered">
+                    {{range .Files}}
+                        <tr>
+                            <td>
+                                {{.Name}}
+                            </td>
+                            <td>
+                                {{.Path}}
+                            </td>
+                            <td>
+                                {{.Size}} bytes
+                            </td>
+                            <td>
+                                <a href="/file?name={{.Name}}">View File</a>
+                            </td>
+                        </tr>
+                    {{end}}
+                </table>
+            </div>
+        </div>
+   </body>
+</html>

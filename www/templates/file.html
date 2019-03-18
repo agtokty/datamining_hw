@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+   <head>
+         <meta charset="UTF-8">
+         
+         <title>File - {{.Name}}</title>
+         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="/static/stylesheets/index.css">
+   </head>
+   <body>
+       <div class="container2">
+            <!-- <div class="header">
+                <h3></h3>
+            </div> -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Files</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{.Name}}</li>
+                </ol>
+            </nav>
+            <div class="table-container">
+                <table class="table tbl-bordered table-sm">
+                    <thead class="fixedHeader">
+                        <tr>
+                            {{range .Data.Columns}}
+                                <td>{{ .}}</td>
+                            {{end}}
+                        </tr>
+                    </thead>
+                    <tbody class="scrollContent">
+                        {{range .Data.Values}}
+                            <tr>
+                                {{range .}}
+                                    <td>{{.}}</td>
+                                {{end}}
+                            </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+   </body>
+</html>
