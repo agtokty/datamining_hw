@@ -99,6 +99,7 @@ func ReadCsvFile(name string) CsvFileData {
 		i++
 	}
 
+	csvFile.Close()
 	// return CsvFileData{
 	// 	Columns: []string{"name", "val"},
 	// 	Values:  [][]string{{"test1", "1"}, {"test2", "2"}},
