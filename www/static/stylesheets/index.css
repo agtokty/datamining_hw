@@ -7,7 +7,8 @@
     overflow-x: auto;
     white-space: nowrap;
     height: 70vh;
-    width: 96vw;
+    width: 100%;
+    border-bottom: 1px solid #6c757d;
 }
 
 /* html>body tbody.scrollContent {

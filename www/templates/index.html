@@ -36,11 +36,11 @@
                     {{range .Files}}
                         <tr>
                             <td>
-                                {{.Name}}
+                                <span title="{{.Name}}">{{ .PreviewContent}}</span>
                             </td>
-                            <td>
+                            <!-- <td>
                                 {{.Path}}
-                            </td>
+                            </td> -->
                             <td>
                                 {{.Size}} bytes
                             </td>

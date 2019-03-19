@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -14,23 +15,25 @@ import (
 	"time"
 )
 
-const maxUploadSize = 2e+6 // 2 MB
-const uploadPath = "./www/data"
+const maxUploadSize = 1e+7 // 10 MB
+const uploadPath = "www/data"
+const dataPath = "www/data"
 
+//File ...
 type File struct {
 	Name string
 	Path string
 	Size int64
 }
 
-//IndexViewModel
+//IndexViewModel ...
 type IndexViewModel struct {
 	Name  string
 	Time  string
 	Files []File
 }
 
-//FileViewModel
+//FileViewModel ...
 type FileViewModel struct {
 	Name    string
 	File    File
@@ -38,16 +41,40 @@ type FileViewModel struct {
 	Message string
 }
 
+//CsvFileData ...
 type CsvFileData struct {
 	Columns []string
 	Values  [][]string
 }
 
+//PreviewContent ...
+func (c File) PreviewContent() string {
+	// This cast is O(N)
+	runes := bytes.Runes([]byte(c.Name))
+	if len(runes) > 30 {
+		return string(runes[:30]) + "..."
+	}
+	return string(runes)
+}
+
+func getDataPath() string {
+	pwd, _ := os.Getwd()
+	path := filepath.Join(pwd, dataPath)
+	fmt.Println(path)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.MkdirAll(path, os.ModePerm)
+	}
+
+	return path
+}
+
+// ReadCsvFile ..
 func ReadCsvFile(name string) CsvFileData {
-	root := "./www/data/"
 	var columnNames []string
 	var rows [][]string
-	csvFile, _ := os.Open(root + name)
+	path := filepath.Join(getDataPath(), name)
+	csvFile, _ := os.Open(path)
 	reader := csv.NewReader(bufio.NewReader(csvFile))
 	i := 0
 	for {
@@ -83,12 +110,12 @@ func ReadCsvFile(name string) CsvFileData {
 	}
 }
 
+// GetFiles ...
 func GetFiles() []File {
-	root := "./www/data"
 	var files []File
 	var fileInfos []os.FileInfo
 
-	fileInfos, err := ioutil.ReadDir(root)
+	fileInfos, err := ioutil.ReadDir(getDataPath())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -109,12 +136,13 @@ func GetFiles() []File {
 }
 
 func renderError(w http.ResponseWriter, errorCode string, httpCode int) {
-	w.WriteHeader(httpCode)
+	http.Error(w, errorCode, httpCode)
 }
 
-func MainHandler(w http.ResponseWriter, r *http.Request) {
+// IndexHandler ...
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
-	var files []File = GetFiles()
+	files := GetFiles()
 
 	templates := template.Must(template.ParseFiles("www/templates/index.html"))
 	indexData := IndexViewModel{
@@ -131,6 +159,7 @@ func MainHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// FileHandler ...
 func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	templates := template.Must(template.ParseFiles("www/templates/file.html"))
@@ -152,7 +181,8 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func uploadFileHandler() http.HandlerFunc {
+// UploadFileHandler ...
+func UploadFileHandler() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 
@@ -206,9 +236,9 @@ func uploadFileHandler() http.HandlerFunc {
 			renderError(w, "CANT_WRITE_FILE", http.StatusInternalServerError)
 			return
 		}
-		w.Write([]byte("SUCCESS"))
 
 		http.Redirect(w, r, "/", 301)
+		// w.Write([]byte("SUCCESS"))
 	})
 }
 
@@ -220,9 +250,9 @@ func main() {
 
 	fs := http.FileServer(http.Dir(uploadPath))
 	http.Handle("/files/", http.StripPrefix("/files", fs))
-	http.HandleFunc("/", MainHandler)
+	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/file", FileHandler)
-	http.HandleFunc("/upload", uploadFileHandler())
+	http.HandleFunc("/upload", UploadFileHandler())
 
 	err := http.ListenAndServe("localhost:8080", nil)
 
